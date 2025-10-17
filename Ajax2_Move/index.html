@@ -52,17 +52,24 @@
 
     </ul>
 </div>
-
+<div id="Details">
+</div>
+<form id="Select position">
+    <input type="submit"  name="Left" value="<<">
+    <input type="submit"  name="Right" value=">>">
+</form>
 <script>
-    const btn = document.forms['formSetSearch'];
+    const btnSearch = document.forms['formSetSearch'];
+    const btnDetals = document.getElementById['getDETAILS'];
     const API_KEY = 'e57f5baf';
     const BASE_API_URL = `http://www.omdbapi.com/?apikey=${API_KEY}`;
     const BASE_IMG_URL = `http://img.omdbapi.com/?apikey=${API_KEY}`;
+    let search = document.getElementById("SearchTitle").value;
+
     function getMovie() {
-        const search = document.getElementById("SearchTitle").value;
         let url;
         if (search !== "") {
-            url = `${BASE_API_URL}&t=${search}`;
+            url = `${BASE_API_URL}&s=${search}`;
         }
         else {
             url = `${BASE_API_URL}&`
@@ -72,30 +79,67 @@
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                let html = `
+                console.log(data.Search);
+
+                data.Search.forEach((item) => {
+                    let html = `
                         <li style="margin: auto; display: flex">
-                        <img style="width: 160px;height: 236px;" src="${data.Poster}" alt="${data.Title}">
+                        <img style="width: 160px;height: 236px;" src="${item.Poster}" alt="${item.Title}">
                             <ul>
-                                <p> ${data.Type}</p>
-                                <h2>${data.Title}</h2>
-                                <p>${data.Year}</p>
+
+                                <p> ${item.Type}</p>
+                                <h2>${item.Title}</h2>
+                                <p>${item.Year}</p>
+                                <button id="getDETAILS">
+                                Details
+                                </button>
                             </ul>
 
 
                         </li>
                         `
-                document.getElementById('OutSearch').innerHTML += html;
+                    document.getElementById('OutSearch').innerHTML += html;
+                })
+
             })
             .catch(error => {
                 console.log(error);
             })
     }
+    function getDETAILS()
+    {
 
-    btn.onsubmit = function (ev) {
+        //let dateilsUrl= `${BASE_API_URL}&t=${}`;
+        let html = `
+
+                        <img style="width: 160px;height: 236px;" src="${dateilsUrl.Poster}" alt="${dateilsUrl.Title}">
+                            <ul>
+                                <ul>
+                                    <li>
+                                        <p> Title:</p>
+                                    </li>
+                                    <li>
+                                        <p> ${dateilsUrl.Title}</p>
+                                    </li>
+                                </ul>
+                                <p> ${dateilsUrl.Title}</p>
+                                <h2>${dateilsUrl.Released}</h2>
+                                <p>${dateilsUrl.Year}</p>
+
+                            </ul>
+
+
+
+                        `
+        document.getElementById('OutSearch').innerHTML += html;
+
+    }
+    btnSearch.onsubmit = function (ev) {
         ev.preventDefault();
         getMovie()
         return false
     }
+
 
 </script>
 </body>
