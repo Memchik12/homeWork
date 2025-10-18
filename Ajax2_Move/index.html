@@ -85,8 +85,8 @@
     <input type="submit"  name="LeftSelect" value="<<">
     <input type="submit"  name="RightSelect" value=">>">
 </form>
-<div id="Details" style="background-color: antiquewhite;
-    background-color: antiquewhite;
+<div id="Details" style="
+background-color: antiquewhite;
     padding: 10px;
     ">
 </div>
@@ -127,7 +127,13 @@
         }
         fetch(url)
             // Краще перевіряти response.ok і викидати помилку, якщо відповідь не ок
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    alert(response.message);
+                    return;
+                }
+                return response.json();
+            })
             .then(data => {
                 console.log(data);
                 console.log(data.Search);
