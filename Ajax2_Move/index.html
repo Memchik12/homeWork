@@ -72,7 +72,9 @@
 <div>
     <p>Films</p>
 </div>
+
 <div>
+
     <ul id="OutSearch" style="
     padding: 0px; margin: 0;
     display: flex;;
@@ -81,15 +83,18 @@
 
     </ul>
 </div>
-<form id="Select_position">
-    <input type="submit"  name="LeftSelect" value="<<">
-    <input type="submit"  name="RightSelect" value=">>">
-</form>
+
+<div>
+    <button onclick="PageMinus()"> <<</button>
+    <button onclick="PagePlus()"> >></button>
+</div>
+
 <div id="Details" style="
 background-color: antiquewhite;
     padding: 10px;
     ">
 </div>
+
 
 <script>
     // Краще називати змінні з префіксом frm для форм, btn для кнопок, inp для інпутів і т.д.
@@ -102,7 +107,7 @@ background-color: antiquewhite;
 
 
 
-
+    let page = 1
     const API_KEY = '53cc027b';
     const BASE_API_URL = `http://www.omdbapi.com/?apikey=${API_KEY}`;
     const BASE_IMG_URL = `http://img.omdbapi.com/?apikey=${API_KEY}`;
@@ -117,9 +122,9 @@ background-color: antiquewhite;
     function getMovie() {
         let url;
         let search = document.getElementById("SearchTitle").value;
-
+        let type = document.getElementById("SelectType").value;
         if (search !== "") {
-            url = `${BASE_API_URL}&s=${search}`;
+            url = `${BASE_API_URL}&s=${search}&page=${page}&type=${type}`;
         }
         else {
             alert("Please enter a search term");
@@ -137,13 +142,27 @@ background-color: antiquewhite;
             .then(data => {
                 console.log(data);
                 console.log(data.Search);
+                let  html
+                if (data.Response === "False") {
+                    html += `
+                        <li>
+                            <p style="font-size: -webkit-xxx-large;"> Nothing found matching your request.</p>
+
+
+                        </li>
+                        `
+                    document.getElementById('OutSearch').innerHTML = html;
+                    return;
+                }
 
                 // Очищати попередні результати перед виводом нових
                 document.getElementById('OutSearch').innerHTML = '';
 
                 // Перевіряти, що там щось взагалі є - и то массив
                 data.Search.forEach((item) => {
-                    let html = `
+                    if (data.Search !== null)
+                    {
+                        html += `
                         <li class="FilmsStyle">
                         <img class="FilmsStyleIMG" src="${item.Poster}" alt="${item.Title}">
                             <ul>
@@ -162,8 +181,12 @@ background-color: antiquewhite;
 
                         </li>
                         `
-                    document.getElementById('OutSearch').innerHTML += html;
+                    }
+
+
+
                 })
+                document.getElementById('OutSearch').innerHTML = html;
 
             })
             .catch(error => {
@@ -255,6 +278,16 @@ background-color: antiquewhite;
 
     }
 
+    function PagePlus()
+    {
+        page++;
+        getMovie();
+    }
+    function PageMinus()
+    {
+        page--;
+        getMovie();
+    }
 
 
     frmSearch.onsubmit = function (ev) {
